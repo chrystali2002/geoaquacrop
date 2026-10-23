@@ -1,0 +1,7 @@
+Trajectory,Yield_t_ha,YieldRecoveryPct,RelWr72,RelWr90,Wr72,Wr90,TrFrac72,TrFrac90,MeanTrVeg,MeanTrRep,BufferDays,RecoveryDays,StressedAtDAP72,BufferCensored,State,YieldGapPct,SeasonalPrecip,SeasonalTrans
+Control,14.76,100.0,1.0,1.0,529.2,603.6,1.0,1.0,1.0,1.0,,,False,False,Tolerant,0.3,578.5,387.3
+Early Recovery,11.72,79.4,0.689,0.77,364.5,465.0,0.681,1.0,0.965,0.928,,15.0,True,False,Recovered,20.0,217.3,303.1
+Late Stress,10.07,68.3,0.763,0.709,404.0,427.9,1.0,0.744,1.0,0.684,8.0,,False,False,N/A (no rain return),21.9,92.4,299.1
+Late Stress v2 (buffered),14.74,99.9,1.0,0.898,529.2,541.8,1.0,1.0,1.0,0.994,65.0,,False,True,Tolerant,0.5,369.4,386.8
+Late Stress v1 (buffered),14.76,100.0,1.0,0.923,529.2,557.3,1.0,1.0,1.0,1.0,65.0,,False,True,Tolerant,0.3,421.7,387.3
+Dual Stress,4.89,33.1,0.689,0.689,364.5,415.8,0.68,0.602,0.965,0.689,,,True,False,N/A (no rain return),37.1,0.0,213.0
