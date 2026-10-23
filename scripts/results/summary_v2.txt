@@ -1,0 +1,12 @@
+
+==============================
+SUMMARY (v2)
+==============================
+
+               experiment  yield_t_ha  ...  water_productivity  yield_gap_pct
+0            control_2015      14.751  ...               2.942          0.346
+1  early_recovery_2015_v2      13.579  ...               3.231          7.092
+2     late_stress_2015_v2      14.684  ...               2.991          0.558
+3     dual_stress_2015_v2      11.083  ...               3.124         23.987
+
+[4 rows x 7 columns]
