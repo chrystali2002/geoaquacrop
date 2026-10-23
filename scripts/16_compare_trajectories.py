@@ -15,10 +15,10 @@ experiments = {
     "early_recovery_2015_v2",
 
     "Late Stress":
-    "late_stress_2015_v4",
+    "late_stress_2015_v3",
 
     "Dual Stress":
-    "dual_stress_2015_v2"
+    "dual_stress_2015_v5"
 }
 
 colors = {
