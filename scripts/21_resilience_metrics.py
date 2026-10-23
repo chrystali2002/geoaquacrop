@@ -12,9 +12,21 @@ selected Story County trajectories:
     late_stress_2015_v3
     dual_stress_2015_v5
 
+Usage
+-----
+python 21_resilience_metrics.py [site_id] [--out FILE] [--legacy-names]
+
+    site_id         row in config/counties.csv and config/phenology.csv
+                    (default: story2015)
+    --legacy-names  write the original Story column names (Wr72, Wr90, ...)
+                    so output can be diffed against story2015_resilience.csv
+
+Reproductive onset, harvest DAP and the DAP at which rainfall is restored
+come from config/phenology.csv (written by 03_growth_stage_diagnostics.py).
+
 Outputs
 -------
-resilience_metrics.csv
+<site_id>_resilience.csv   (or --out)
 
 Metrics
 -------
@@ -32,8 +44,10 @@ Metrics
       N/A (no rain return)
 """
 
+import argparse
+import os
+import sys
 from pathlib import Path
-import pickle
 import numpy as np
 import pandas as pd
 
@@ -41,33 +55,44 @@ import pandas as pd
 # CONFIG
 # ==================================================
 
-BASE = Path(
-    "/mnt/scratch/olusegu3/geoaquacrop/experiments"
+ROOT = Path(
+    os.environ.get(
+        "GEOAQUACROP_ROOT",
+        "/mnt/scratch/olusegu3/geoaquacrop"
+    )
 )
 
-RUNS = {
-    "Control":
-        BASE / "control_2015",
+BASE = ROOT / "experiments"
+CONFIG = ROOT / "config"
 
-    "Early Recovery":
-        BASE / "early_recovery_2015_v2",
+# Selected experiments per site:
+#   label -> (experiment folder, does rainfall return at reproductive onset?)
+# Add a site here only after its versions were chosen by the written
+# selection rule (not by looking at which curve looks best).
+RUNS_BY_SITE = {
+    "story2015": {
+        "Control":
+            ("control_2015", False),
 
-    "Late Stress":
-        BASE / "late_stress_2015_v3",
+        "Early Recovery":
+            ("early_recovery_2015_v2", True),
 
-    "Late Stress v2 (buffered)":
-        BASE / "late_stress_2015_v2",
+        "Late Stress":
+            ("late_stress_2015_v3", False),
 
-    "Late Stress v1 (buffered)":
-        BASE / "late_stress_2015_v1",
+        "Late Stress v2 (buffered)":
+            ("late_stress_2015_v2", False),
 
-    "Dual Stress":
-        BASE / "dual_stress_2015_v5"
+        "Late Stress v1 (buffered)":
+            ("late_stress_2015_v1", False),
+
+        "Dual Stress":
+            ("dual_stress_2015_v5", False),
+    },
 }
 
-D72 = 72
-D90 = 90
-HARVEST = 137
+# second storage checkpoint = reproductive onset + 18 days (DAP 90 at Story)
+ONSET_PLUS = 18
 
 YIELD_COL = "Dry yield (tonne/ha)"
 
@@ -75,14 +100,105 @@ THRESH = 0.95
 ROLL = 5
 CONSEC = 5
 
-# only Early Recovery has rainfall restoration
+# generic output names -> names used in the archived Story table
+LEGACY_COLUMNS = {
+    "RelWr_onset": "RelWr72",
+    "RelWr_onset18": "RelWr90",
+    "Wr_onset": "Wr72",
+    "Wr_onset18": "Wr90",
+    "TrFrac_onset": "TrFrac72",
+    "TrFrac_onset18": "TrFrac90",
+    "StressedAtOnset": "StressedAtDAP72",
+}
+
+parser = argparse.ArgumentParser()
+parser.add_argument("site", nargs="?", default="story2015")
+parser.add_argument("--out", default=None)
+parser.add_argument("--legacy-names", action="store_true")
+args = parser.parse_args()
+
+SITE = args.site
+
+counties = pd.read_csv(CONFIG / "counties.csv")
+
+if SITE not in set(counties["site_id"]):
+    sys.exit(f"{SITE} not found in {CONFIG / 'counties.csv'}")
+
+pheno_file = CONFIG / "phenology.csv"
+
+if not pheno_file.exists():
+    sys.exit(
+        f"{pheno_file} not found. Run "
+        f"03_growth_stage_diagnostics.py {SITE} first."
+    )
+
+pheno = pd.read_csv(pheno_file)
+pheno = pheno.loc[pheno["site_id"] == SITE]
+
+if len(pheno) != 1:
+    sys.exit(
+        f"phenology.csv needs exactly one row for {SITE}; found "
+        f"{len(pheno)}. Run 03_growth_stage_diagnostics.py {SITE}."
+    )
+
+if SITE not in RUNS_BY_SITE:
+    sys.exit(f"No selected runs defined for {SITE} in RUNS_BY_SITE")
+
+
+
+def phenology_dap(row, dap_col, date_col):
+    """DAP from the model's dap column; else from dates (planting + DAP days)."""
+
+    if dap_col in row.index and pd.notna(row[dap_col]):
+        return int(row[dap_col]), "dap column"
+
+    if (
+        date_col in row.index
+        and "planting_date" in row.index
+        and pd.notna(row[date_col])
+    ):
+        days = (
+            pd.to_datetime(row[date_col])
+            - pd.to_datetime(row["planting_date"])
+        ).days
+        return int(days), "derived from dates"
+
+    sys.exit(
+        f"phenology.csv row for {SITE} has neither '{dap_col}' nor "
+        f"'{date_col}' with 'planting_date'. Columns found: "
+        f"{list(row.index)}. Run 03_growth_stage_diagnostics.py {SITE} "
+        "to regenerate the row."
+    )
+
+
+ONSET, onset_src = phenology_dap(
+    pheno.iloc[0], "reproductive_dap", "reproductive_date"
+)
+HARVEST, harvest_src = phenology_dap(
+    pheno.iloc[0], "harvest_dap", "harvest_date"
+)
+ONSET18 = ONSET + ONSET_PLUS
+
+print(
+    f"Phenology ({SITE}): reproductive onset DAP {ONSET} ({onset_src}), "
+    f"harvest DAP {HARVEST} ({harvest_src})"
+)
+
+if not (0 < ONSET < ONSET18 <= HARVEST):
+    sys.exit(
+        f"Inconsistent phenology for {SITE}: onset={ONSET}, "
+        f"onset+{ONSET_PLUS}={ONSET18}, harvest={HARVEST}"
+    )
+
+RUNS = {
+    label: BASE / folder
+    for label, (folder, _) in RUNS_BY_SITE[SITE].items()
+}
+
+# rainfall is restored on the day after reproductive onset
 RAIN_RETURN = {
-    "Control": None,
-    "Early Recovery": 73,
-    "Late Stress": None,
-    "Late Stress v2 (buffered)": None,
-    "Late Stress v1 (buffered)": None,
-    "Dual Stress": None
+    label: (ONSET + 1 if restores else None)
+    for label, (_, restores) in RUNS_BY_SITE[SITE].items()
 }
 
 # ==================================================
@@ -178,14 +294,14 @@ yield_control = (
 
 wr72_control = (
     control_daily
-    .query("dap == @D72")
+    .query("dap == @ONSET")
     ["Wr"]
     .iloc[0]
 )
 
 wr90_control = (
     control_daily
-    .query("dap == @D90")
+    .query("dap == @ONSET18")
     ["Wr"]
     .iloc[0]
 )
@@ -213,13 +329,13 @@ for name, exp_dir in RUNS.items():
     )
 
     wr72 = (
-        daily.query("dap == @D72")
+        daily.query("dap == @ONSET")
         ["Wr"]
         .iloc[0]
     )
 
     wr90 = (
-        daily.query("dap == @D90")
+        daily.query("dap == @ONSET18")
         ["Wr"]
         .iloc[0]
     )
@@ -233,13 +349,13 @@ for name, exp_dir in RUNS.items():
     )
 
     tr72 = (
-        daily.query("dap == @D72")
+        daily.query("dap == @ONSET")
         ["Tr_fraction"]
         .iloc[0]
     )
 
     tr90 = (
-        daily.query("dap == @D90")
+        daily.query("dap == @ONSET18")
         ["Tr_fraction"]
         .iloc[0]
     )
@@ -264,11 +380,11 @@ for name, exp_dir in RUNS.items():
     )
 
     veg = daily[
-        daily["dap"] <= D72
+        daily["dap"] <= ONSET
     ]
 
     rep = daily[
-        daily["dap"] > D72
+        daily["dap"] > ONSET
     ]
 
     mean_tr_veg = (
@@ -345,7 +461,7 @@ for name, exp_dir in RUNS.items():
                 )
 
     post72 = daily[
-        daily["dap"] > D72
+        daily["dap"] > ONSET
     ]
 
     first_stress = post72[
@@ -353,7 +469,7 @@ for name, exp_dir in RUNS.items():
     ]
 
     stressed_at_72 = bool(
-        daily.loc[daily["dap"] == D72, "roll"].iloc[0] < THRESH
+        daily.loc[daily["dap"] == ONSET, "roll"].iloc[0] < THRESH
     )
     buffer_censored = False
 
@@ -366,13 +482,13 @@ for name, exp_dir in RUNS.items():
                     first_stress
                     .iloc[0]["dap"]
                 )
-                - D72
+                - ONSET
             )
 
         else:
 
             # never stressed after DAP 72: buffer lasted to harvest
-            buffer_days = HARVEST - D72
+            buffer_days = HARVEST - ONSET
             buffer_censored = True
 
     if name == "Control":
@@ -393,28 +509,28 @@ for name, exp_dir in RUNS.items():
                     1
                 ),
 
-            "RelWr72":
+            "RelWr_onset":
                 round(
                     rel_wr72,
                     3
                 ),
 
-            "RelWr90":
+            "RelWr_onset18":
                 round(
                     rel_wr90,
                     3
                 ),
 
-            "Wr72":
+            "Wr_onset":
                 round(wr72, 1),
 
-            "Wr90":
+            "Wr_onset18":
                 round(wr90, 1),
 
-            "TrFrac72":
+            "TrFrac_onset":
                 round(tr72, 3),
 
-            "TrFrac90":
+            "TrFrac_onset18":
                 round(tr90, 3),
 
             "MeanTrVeg":
@@ -435,7 +551,7 @@ for name, exp_dir in RUNS.items():
             "RecoveryDays":
                 recovery_days,
 
-            "StressedAtDAP72":
+            "StressedAtOnset":
                 stressed_at_72,
 
             "BufferCensored":
@@ -467,9 +583,10 @@ for name, exp_dir in RUNS.items():
 
 df = pd.DataFrame(results)
 
-outfile = (
-    "resilience_metrics.csv"
-)
+if args.legacy_names:
+    df = df.rename(columns=LEGACY_COLUMNS)
+
+outfile = args.out or f"{SITE}_resilience.csv"
 
 df.to_csv(
     outfile,

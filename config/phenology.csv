@@ -1,0 +1,2 @@
+site_id,planting_date,reproductive_dap,harvest_dap,reproductive_date,harvest_date,cells_agree,source
+story2015,2015-05-13,72,137,2015-07-24,2015-09-27,True,/mnt/scratch/olusegu3/geoaquacrop/experiments/control_2015/outputs

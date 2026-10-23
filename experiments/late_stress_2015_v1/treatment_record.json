@@ -1,0 +1,26 @@
+{
+  "experiment": "late_stress_2015_v1",
+  "site_id": "story2015",
+  "year": 2015,
+  "veg_mult": 1.0,
+  "rep_mult": 0.5,
+  "scope": "windows",
+  "applications": 1,
+  "planting_date": "2015-05-13",
+  "reproductive_dap": 72,
+  "harvest_dap": 137,
+  "baseline_file": "/mnt/scratch/olusegu3/geoaquacrop/story2015/processed/Precipitation20152015.nc",
+  "baseline_sha256": "f068ed7756773a78bd48a7be8d6d0bd1182364ccaab2ebd0b6bab57c13ea80fb",
+  "output_sha256": "10732c25de2f26e000033a694956c0b0f5d4ad6924e48ec9be6683091a08f01f",
+  "rainfall_mm_before": {
+    "vegetative": 369.4419250488281,
+    "reproductive": 209.05523681640625,
+    "whole_year": 1161.72900390625
+  },
+  "rainfall_mm_after": {
+    "vegetative": 369.4419250488281,
+    "reproductive": 104.52761840820312,
+    "whole_year": 1057.201416015625
+  },
+  "created_utc": "2026-10-23T18:51:18+00:00"
+}
