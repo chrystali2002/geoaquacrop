@@ -281,12 +281,26 @@ elif experiment == "dual_stress_2015_v4":
 
     diag_mask = veg_mask | rep_mask
 
+
+
+# ==============================
+# DUAL STRESS v5
+# ==============================
+elif experiment == "dual_stress_2015_v5":
+
+    ppt_mod["Precipitation"] = (
+        ppt_mod["Precipitation"] * 0.0
+    )
+
+    diag_mask = (
+        veg_mask | rep_mask
+    )
+
 else:
 
     raise ValueError(
         f"Unknown experiment: {experiment}"
     )
-
 
 # --------------------------------------------------
 # Diagnostics
