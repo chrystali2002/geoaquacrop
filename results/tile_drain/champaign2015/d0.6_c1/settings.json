@@ -1,0 +1,9 @@
+{
+  "site": "champaign2015",
+  "depth_m": 0.6,
+  "coeff": 1.0,
+  "target": null,
+  "cells": "key",
+  "exploratory": true,
+  "note": "Simplified tile drainage, assumed parameters, not calibrated; no water table."
+}

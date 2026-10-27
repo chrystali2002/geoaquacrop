@@ -1,0 +1,25 @@
+veg_mult,rep_mult,yr_story2015,yr_champaign2015,state_story2015,state_champaign2015,abs_diff_pp,within_limit
+1.0,0.75,100.0,100.0,Tolerant,Tolerant,0.0,True
+1.0,0.5,100.0,100.0,Tolerant,Tolerant,0.0,True
+1.0,0.25,100.0,100.0,Tolerant,Tolerant,0.0,True
+1.0,0.0,99.9,99.9,Tolerant,Tolerant,0.0,True
+0.75,1.0,100.0,99.7,Tolerant,Tolerant,0.29999999999999716,True
+0.75,0.75,100.0,99.7,Tolerant,Tolerant,0.29999999999999716,True
+0.75,0.5,100.0,99.8,Tolerant,Tolerant,0.20000000000000284,True
+0.75,0.25,100.0,99.7,Tolerant,Tolerant,0.29999999999999716,True
+0.75,0.0,99.1,98.4,N/A (no rain return),N/A (no rain return),0.6999999999999886,True
+0.5,1.0,100.0,99.3,Tolerant,Tolerant,0.7000000000000028,True
+0.5,0.75,100.0,99.3,Tolerant,Tolerant,0.7000000000000028,True
+0.5,0.5,100.0,98.4,Tolerant,Not Recovered,1.5999999999999943,True
+0.5,0.25,99.2,95.1,Not Recovered,Not Recovered,4.1000000000000085,True
+0.5,0.0,94.6,88.6,N/A (no rain return),N/A (no rain return),6.0,True
+0.25,1.0,98.5,96.5,Recovered,Recovered,2.0,True
+0.25,0.75,98.1,92.9,Recovered,Recovered,5.199999999999989,True
+0.25,0.5,96.1,86.9,Recovered,Recovered,9.199999999999989,True
+0.25,0.25,89.0,77.7,Not Recovered,Not Recovered,11.299999999999997,False
+0.25,0.0,68.3,55.5,N/A (no rain return),N/A (no rain return),12.799999999999997,False
+0.0,1.0,79.8,83.9,Recovered,Recovered,4.1000000000000085,True
+0.0,0.75,77.2,77.4,Recovered,Recovered,0.20000000000000284,True
+0.0,0.5,74.5,66.8,Recovered,Recovered,7.700000000000003,True
+0.0,0.25,64.1,46.3,Recovered,Not Recovered,17.799999999999997,False
+0.0,0.0,33.1,28.8,N/A (no rain return),N/A (no rain return),4.300000000000001,True

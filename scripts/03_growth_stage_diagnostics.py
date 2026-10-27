@@ -13,7 +13,8 @@ python 03_growth_stage_diagnostics.py [site_id] [--control-dir DIR]
     site_id        row in config/counties.csv (default: story2015)
     --control-dir  folder holding the control run's summary_results.pkl and
                    daily_results.pkl. Default:
-                   <root>/experiments/control_<year>/outputs
+                   <root>/experiments/control_<year>/outputs (story2015) or
+                   <root>/experiments/<site_id>/control_<year>/outputs
 
 DAP convention: the model's own `dap` column. Dates written to
 phenology.csv are planting_date + DAP days (same convention as the
@@ -54,10 +55,18 @@ if len(match) != 1:
 
 YEAR = int(match.iloc[0]["year"])
 
+# Story keeps its legacy layout (frozen results); every other site gets its
+# own folder so control_<year> runs cannot overwrite another site's outputs
+EXPERIMENTS = (
+    ROOT / "experiments"
+    if SITE == "story2015"
+    else ROOT / "experiments" / SITE
+)
+
 BASE = (
     Path(args.control_dir)
     if args.control_dir
-    else ROOT / "experiments" / f"control_{YEAR}" / "outputs"
+    else EXPERIMENTS / f"control_{YEAR}" / "outputs"
 )
 
 summary = pd.read_pickle(

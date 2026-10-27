@@ -8,7 +8,7 @@ Usage
 -----
 python 04_modify_precip.py EXPERIMENT [--site story2015]
                            [--baseline-dir DIR] [--experiments-dir DIR]
-                           [--check]
+                           [--check] [--overwrite] [--applications N]
 
     EXPERIMENT       a row of config/treatments.csv, e.g. late_stress_2015_v2
     --site           row in config/counties.csv / config/phenology.csv
@@ -18,6 +18,12 @@ python 04_modify_precip.py EXPERIMENT [--site story2015]
     --check          do not write; compare the experiment's EXISTING
                      precipitation file with a single and a double
                      application of the treatment
+    --overwrite      allow replacing an existing precipitation file that is
+                     neither the unmodified baseline nor identical to the
+                     new result (the old file is backed up first)
+    --applications N apply the treatment N times (default 1). Only for
+                     restoring the frozen Story runs, which the old script
+                     applied twice; recorded in treatment_record.json
 
 Why this differs from the previous version
 -------------------------------------------
@@ -64,6 +70,8 @@ parser.add_argument("--site", default="story2015")
 parser.add_argument("--baseline-dir", default=None)
 parser.add_argument("--experiments-dir", default=None)
 parser.add_argument("--check", action="store_true")
+parser.add_argument("--overwrite", action="store_true")
+parser.add_argument("--applications", type=int, default=1)
 args = parser.parse_args()
 
 experiment = args.experiment
@@ -148,6 +156,9 @@ if len(trow) != 1:
 veg_mult = float(trow.iloc[0]["veg_mult"])
 rep_mult = float(trow.iloc[0]["rep_mult"])
 scope = str(trow.iloc[0]["scope"])
+
+if args.applications < 1:
+    sys.exit("--applications must be at least 1")
 
 if scope not in ("windows", "year"):
     sys.exit(f"scope must be 'windows' or 'year'; got {scope!r}")
@@ -243,6 +254,13 @@ def apply_treatment(ds):
     return out
 
 
+def apply_n(ds, n):
+    out = ds
+    for _ in range(n):
+        out = apply_treatment(out)
+    return out
+
+
 def window_totals(ds):
     """Spatial-mean rainfall (mm) in each window and over the whole year."""
 
@@ -315,13 +333,20 @@ if args.check:
         verdict = "EXISTING file matches none of these; investigate."
 
     print("\n" + verdict)
+
+    wanted = apply_n(ppt, args.applications)
+    print(
+        f"Matches the requested definition "
+        f"(--applications {args.applications}): "
+        f"{bool(existing['Precipitation'].equals(wanted['Precipitation']))}"
+    )
     sys.exit(0)
 
 # --------------------------------------------------
 # Write
 # --------------------------------------------------
 
-mod = apply_treatment(ppt)
+mod = apply_n(ppt, args.applications)
 
 before = window_totals(ppt)
 after = window_totals(mod)
@@ -337,11 +362,47 @@ if not exp_processed.exists():
     shutil.copytree(baseline_dir, exp_processed)
     print(f"\nCopied baseline inputs -> {exp_processed}")
 
-tmpfile = outfile.with_name(outfile.stem + "_modified.nc")
+up_to_date = False
 
-mod.to_netcdf(tmpfile)
+if outfile.exists():
 
-tmpfile.replace(outfile)
+    existing = xr.open_dataset(outfile)
+    existing.load()
+    existing.close()
+
+    if existing["Precipitation"].equals(mod["Precipitation"]):
+
+        up_to_date = True
+        print("\nAlready up to date: existing file equals the requested forcing.")
+
+    elif existing["Precipitation"].equals(ppt["Precipitation"]):
+
+        pass    # unmodified baseline copy: safe to replace
+
+    elif not args.overwrite:
+
+        sys.exit(
+            f"\nREFUSING to replace {outfile}:\n"
+            "it is neither the unmodified baseline nor identical to the "
+            "requested result (an earlier, different treatment is in place).\n"
+            f"Compare first:  python 04_modify_precip.py {experiment} --check\n"
+            "Replace anyway (old file is backed up):  add --overwrite"
+        )
+
+    else:
+
+        stamp = datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%S")
+        backup = outfile.with_name(outfile.name + f".bak_{stamp}")
+        shutil.copy2(outfile, backup)
+        print(f"\nBacked up existing file -> {backup}")
+
+if not up_to_date:
+
+    tmpfile = outfile.with_name(outfile.stem + "_modified.nc")
+
+    mod.to_netcdf(tmpfile)
+
+    tmpfile.replace(outfile)
 
 record = {
     "experiment": experiment,
@@ -350,7 +411,7 @@ record = {
     "veg_mult": veg_mult,
     "rep_mult": rep_mult,
     "scope": scope,
-    "applications": 1,
+    "applications": args.applications,
     "planting_date": planting.strftime("%Y-%m-%d"),
     "reproductive_dap": reproductive_dap,
     "harvest_dap": harvest_dap,

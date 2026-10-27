@@ -14,10 +14,14 @@ selected Story County trajectories:
 
 Usage
 -----
-python 21_resilience_metrics.py [site_id] [--out FILE] [--legacy-names]
+python 21_resilience_metrics.py [site_id] [--out FILE] [--legacy-names] [--grid]
 
     site_id         row in config/counties.csv and config/phenology.csv
                     (default: story2015)
+    --grid          evaluate the control plus every treatments.csv row in group
+                    "grid" (24 cells) instead of the hand-selected Story runs;
+                    adds veg_mult and rep_mult columns. Rainfall is treated as
+                    returning after onset whenever rep_mult > 0.
     --legacy-names  write the original Story column names (Wr72, Wr90, ...)
                     so output can be diffed against story2015_resilience.csv
 
@@ -115,6 +119,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("site", nargs="?", default="story2015")
 parser.add_argument("--out", default=None)
 parser.add_argument("--legacy-names", action="store_true")
+parser.add_argument("--grid", action="store_true")
 args = parser.parse_args()
 
 SITE = args.site
@@ -123,6 +128,33 @@ counties = pd.read_csv(CONFIG / "counties.csv")
 
 if SITE not in set(counties["site_id"]):
     sys.exit(f"{SITE} not found in {CONFIG / 'counties.csv'}")
+
+YEAR = int(counties.loc[counties["site_id"] == SITE, "year"].iloc[0])
+
+# Story keeps its legacy folder layout; every other site has its own folder
+BASE = (
+    ROOT / "experiments"
+    if SITE == "story2015"
+    else ROOT / "experiments" / SITE
+)
+
+GRID_META = {}
+
+if args.grid:
+
+    tr_file = CONFIG / "treatments.csv"
+    tr = pd.read_csv(tr_file)
+    tr = tr.loc[tr["group"] == "grid"]
+
+    if len(tr) != 24:
+        sys.exit(f"Expected 24 grid rows in {tr_file}, found {len(tr)}")
+
+    RUNS_BY_SITE[SITE] = {"Control": (f"control_{YEAR}", False)}
+    GRID_META["Control"] = (1.0, 1.0)
+
+    for r in tr.itertuples():
+        RUNS_BY_SITE[SITE][r.experiment] = (r.experiment, bool(r.rep_mult > 0))
+        GRID_META[r.experiment] = (float(r.veg_mult), float(r.rep_mult))
 
 pheno_file = CONFIG / "phenology.csv"
 
@@ -500,6 +532,15 @@ for name, exp_dir in RUNS.items():
         {
             "Trajectory": name,
 
+            **(
+                {
+                    "veg_mult": GRID_META[name][0],
+                    "rep_mult": GRID_META[name][1],
+                }
+                if args.grid
+                else {}
+            ),
+
             "Yield_t_ha":
                 round(yield_actual, 2),
 
@@ -586,7 +627,9 @@ df = pd.DataFrame(results)
 if args.legacy_names:
     df = df.rename(columns=LEGACY_COLUMNS)
 
-outfile = args.out or f"{SITE}_resilience.csv"
+outfile = args.out or (
+    f"{SITE}_grid_resilience.csv" if args.grid else f"{SITE}_resilience.csv"
+)
 
 df.to_csv(
     outfile,

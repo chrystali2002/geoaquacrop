@@ -1,0 +1,95 @@
+{
+  "reference": "story2015",
+  "site": "champaign2015",
+  "story2015": {
+    "H1": "Supported",
+    "H1_cells": [
+      {
+        "veg": 1.0,
+        "rep": 0.25,
+        "yield_recovery_pct": 100.0,
+        "state": "Tolerant",
+        "pass": true
+      },
+      {
+        "veg": 1.0,
+        "rep": 0.0,
+        "yield_recovery_pct": 99.9,
+        "state": "Tolerant",
+        "pass": true
+      }
+    ],
+    "H2": "Supported",
+    "H2_levels": [
+      {
+        "veg": 0.25,
+        "state_rep1": "Recovered",
+        "yr_rep1": 98.5,
+        "yr_rep0": 68.3,
+        "evaluable": true,
+        "gain_pp": 30.200000000000003,
+        "pass": true
+      },
+      {
+        "veg": 0.0,
+        "state_rep1": "Recovered",
+        "yr_rep1": 79.8,
+        "yr_rep0": 33.1,
+        "evaluable": true,
+        "gain_pp": 46.699999999999996,
+        "pass": true
+      }
+    ]
+  },
+  "champaign2015": {
+    "H1": "Supported",
+    "H1_cells": [
+      {
+        "veg": 1.0,
+        "rep": 0.25,
+        "yield_recovery_pct": 100.0,
+        "state": "Tolerant",
+        "pass": true
+      },
+      {
+        "veg": 1.0,
+        "rep": 0.0,
+        "yield_recovery_pct": 99.9,
+        "state": "Tolerant",
+        "pass": true
+      }
+    ],
+    "H2": "Supported",
+    "H2_levels": [
+      {
+        "veg": 0.25,
+        "state_rep1": "Recovered",
+        "yr_rep1": 96.5,
+        "yr_rep0": 55.5,
+        "evaluable": true,
+        "gain_pp": 41.0,
+        "pass": true
+      },
+      {
+        "veg": 0.0,
+        "state_rep1": "Recovered",
+        "yr_rep1": 83.9,
+        "yr_rep0": 28.8,
+        "evaluable": true,
+        "gain_pp": 55.10000000000001,
+        "pass": true
+      }
+    ]
+  },
+  "H3": {
+    "cells_within_limit": 21,
+    "of": 24,
+    "fraction": 0.875,
+    "cell_agreement_met": true,
+    "H1_same_outcome": true,
+    "H2_same_outcome": true,
+    "H2_evaluable_at_both": true,
+    "outcome": "Supported",
+    "inconsistent_per_plan": false
+  }
+}

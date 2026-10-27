@@ -4,3 +4,12 @@ dist/
 build/
 *.egg-info/
 docs/_build/
+/experiments/
+/champaign2015/
+/story2015/
+/shared_inputs/
+results/logs/
+*.out
+*.old.py
+.cds_api_token
+.nass_api_key
