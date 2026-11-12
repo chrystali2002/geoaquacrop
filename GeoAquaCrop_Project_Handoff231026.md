@@ -2,7 +2,7 @@
 
 ## Story County, Iowa (2015) Drought-Trajectory Mechanism Study
 
-**Status:** Story County Analysis Complete (Ready for Illinois Expansion)  
+**Status:** Story County analysis complete and frozen (tag `story2015_final`). Champaign County, IL pipeline run with the same pre-specified design and committed as tag `grid_results_v1` on branch `county_pipeline_refactor` (see "Illinois Extension" below)    
 **Last Updated:** October 2026  
 **Project Root:** `/mnt/scratch/olusegu3/geoaquacrop`
 
@@ -213,6 +213,13 @@ DAP 73–137
 
 ## Preprocessing
 
+> Since the county-pipeline refactor, steps 01 and 02 are site-agnostic: `01_run_preprocess.py --site SITE`
+> and `02_run_control.py --site SITE` (04, 05, 06, 21, 22 and 23 also take a site). The Story-specific
+> `01_run_preprocess_2015.py`, `02_run_control_2015.py`, `story2015_resilience.csv` and the report are kept
+> unchanged in `scripts/archive/`. Story results are reproduced exactly by the refactored
+> `21_resilience_metrics.py` (`--legacy-names`; only seven columns were renamed, e.g. `Wr_onset` is now `Wr72`).
+
+
 ### 01_run_preprocess_2015.py
 
 Purpose:
@@ -409,6 +416,12 @@ Inspects output structure.
 
 # Experiment Evolution
 
+> These tables are tuning history from before the October 2026 clean rerun. They are not
+> reproducible from the current forcing files and are superseded by the "Final Story County
+> Results" tables below (for example, Late Stress v3 is 8.36 t ha⁻¹ here and 10.07 t ha⁻¹ in the
+> final table; Dual Stress v5 is 3.69 and 4.89). The effective rainfall multipliers of the archived
+> experiments are listed in the next section.
+
 ## Early Recovery
 
 | Version | Yield (t ha⁻¹) | Yield Gap (%) | Interpretation |
@@ -458,6 +471,38 @@ late_stress_2015_v3
 ```text
 dual_stress_2015_v5
 ```
+
+---
+
+# Effective Rainfall Multipliers of the Archived Story Experiments
+
+The archived forcing files were created by an earlier version of `04_modify_precip.py` that
+applied a treatment again on reruns. For 8 of the 13 experiments the effective multiplier is
+therefore the labelled multiplier squared. The effective values were computed directly from the
+forcing files (experiment rainfall divided by baseline rainfall, summed over the vegetative window
+2015-05-13 to 2015-07-23 and the reproductive window 2015-07-24 to 2015-09-27).
+
+| Experiment | Labelled veg / rep | Effective veg / rep |
+|---|---|---|
+| early_recovery_2015_v1 | 0.50 / 1.00 | 0.250 / 1.000 |
+| early_recovery_2015_v2 (selected) | 0.15 / 1.00 | 0.023 / 1.000 |
+| early_recovery_2015_v3 | 0.00 / 1.00 | 0.000 / 1.000 |
+| late_stress_2015_v1 | 1.00 / 0.50 | 1.000 / 0.500 |
+| late_stress_2015_v2 | 1.00 / 0.00 | 1.000 / 0.000 |
+| late_stress_2015_v3 (selected) | 0.50 / 0.00 | 0.250 / 0.000 |
+| late_stress_2015_v4 | 0.50 / 0.00 | 0.250 / 0.000 |
+| late_stress_2015_v5 | 0.25 / 0.00 | 0.062 / 0.000 |
+| dual_stress_2015_v1 | 0.50 / 0.50 | 0.250 / 0.250 |
+| dual_stress_2015_v2 | 0.15 / 0.15 | 0.023 / 0.023 |
+| dual_stress_2015_v3 | 0.00 / 0.00 | 0.000 / 0.000 |
+| dual_stress_2015_v4 | 0.25 / 0.00 | 0.062 / 0.000 |
+| dual_stress_2015_v5 (selected) | 0.00 / 0.00 | 0.000 / 0.000 |
+
+The pre-specified grid (`config/treatments.csv`, group `grid`) reproduces the selected experiments:
+Late Stress v3 equals grid cell `g_v025_r000` (yield recovery 68.3%), Dual Stress v5 equals
+`g_v000_r000` (33.1%), and Late Stress v2 (99.9%) equals `g_v100_r000`. The forcing file of
+`late_stress_2015_v1` shown above is the file as it exists now; it was overwritten at ×0.5 and may
+not be the file that produced the archived yield.
 
 ---
 
@@ -748,6 +793,25 @@ Agricultural Drought
 When Root-Zone Water Buffers
 Crop Transpiration
 ```
+
+---
+
+# Illinois Extension (Champaign County, 2015)
+
+Champaign County, IL (GEOID 17019, `champaign2015`) was run through the same pre-specified,
+site-agnostic pipeline (frozen plan: tag `champaign_plan_frozen`; results: tag `grid_results_v1`).
+Design: 24 veg × rep rainfall multipliers (1, 0.75, 0.5, 0.25, 0) plus the control, at both sites.
+
+- H1 (veg = 1.00, rep ∈ {0.25, 0.00}: recovery ≥ 95% and Tolerant): supported at both sites.
+- H2 (veg ∈ {0.25, 0.00}; rep = 1.00 versus rep = 0.00 gain ≥ 20 pp and Recovered): supported at both sites.
+- H3 (cross-site agreement): 21 of 24 cells within 10 pp (88%); supported. The three cells that differ by
+  more than 10 pp are veg 0.25 with rep 0.25 and 0.00 and veg 0.00 with rep 0.25 (Champaign lower).
+- Validation gate 3: model dry-matter yield over NASS 2015 yield, R = 1.553 (Champaign) and 1.480 (Story),
+  difference 0.073 (tolerance 0.20). The uncalibrated model is a potential-type model and the control is never retuned.
+- Integrity gates: see `docs/integrity_gates_2026-10-27.md`.
+- Tile drainage is not represented (TileDrain = 0); an exploratory run with AquaCrop's simplified option
+  changed recovery by at most 0.3 pp, but the model has no water table. See
+  `docs/limitations_tile_drainage_2026-10-27.md`.
 
 ---
 
