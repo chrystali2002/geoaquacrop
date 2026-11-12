@@ -1,0 +1,12 @@
+state,ssmi_cellB_coef_bu_ac,p_value,irrigated_corn_pct,in_primary,source
+Iowa,1.36,0.138,1.2,True,Supplementary S6.1 (Track-NASS); Table S1
+Illinois,-0.53,0.543,3.3,True,Supplementary S6.1 (Track-NASS); Table S1
+Indiana,-0.12,0.904,6.3,True,Supplementary S6.1 (Track-NASS); Table S1
+Missouri,-1.57,0.212,9.4,True,Supplementary S6.1 (Track-NASS); Table S1
+Ohio,0.58,0.605,0.5,True,Supplementary S6.1 (Track-NASS); Table S1
+Wisconsin,-0.08,0.957,4.7,True,Supplementary S6.1 (Track-NASS); Table S1
+Michigan,-5.62,<0.001,13.3,True,Supplementary S6.1 (Track-NASS); Table S1
+South Dakota,-6.01,<0.001,3.5,True,Supplementary S6.1 (Track-NASS); Table S1
+Minnesota,3.67,0.006,3.9,True,Supplementary S6.1 (Track-NASS); Table S1
+Kansas,-2.99,0.108,25.4,False,excluded: irrigated corn share >= 15%
+Nebraska,-4.02,0.007,52.7,False,excluded: irrigated corn share >= 15%
