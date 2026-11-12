@@ -248,7 +248,11 @@ fig, axes = plt.subplots(nrows, ncols, figsize=(4.0 * ncols + 0.6, 4.1 * nrows +
                          constrained_layout=True, facecolor=TH["surface"])
 
 fmt_val = (lambda v: f"{v:.{dec}f}")
-fmt_diff = (lambda v: ("+" if v > 0 else ("−" if v < 0 else "")) + f"{abs(v):.{dec}f}")
+def fmt_diff(v):
+    r = round(float(v), dec)
+    if r == 0:
+        return f"{0:.{dec}f}"
+    return ("+" if r > 0 else "−") + f"{abs(r):.{dec}f}"
 
 for k, s in enumerate(sites):
     ax = axes[0, k]
@@ -298,3 +302,5 @@ for ext in a.formats:
     f = prefix.with_suffix("." + ext)
     fig.savefig(f, dpi=200, facecolor=TH["surface"], bbox_inches="tight")
     print("Wrote", f)
+
+
