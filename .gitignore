@@ -13,3 +13,4 @@ results/logs/
 *.old.py
 .cds_api_token
 .nass_api_key
+results/tile_drain/*/*/*/
