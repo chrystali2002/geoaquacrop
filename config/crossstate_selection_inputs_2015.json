@@ -1,0 +1,22 @@
+{
+  "retrieved_utc": "2026-11-12T19:13:44+00:00",
+  "year": "2015",
+  "states": [
+    "IL",
+    "IN",
+    "IA",
+    "MI",
+    "MN",
+    "MO",
+    "OH",
+    "SD",
+    "WI"
+  ],
+  "top_n": 20,
+  "nass_url": "https://quickstats.nass.usda.gov/api/api_GET/",
+  "awc_source": "NRCS Soil Data Access muaggatt.aws0150wta, area-weighted by muacres",
+  "cached_inputs": {
+    "area_yield_csv": null,
+    "awc_csv": null
+  }
+}
