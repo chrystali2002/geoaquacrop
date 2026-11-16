@@ -1,0 +1,32 @@
+Consistency: max |all-cell loss recomputed here - loss in crossstate_county_loss.csv| = 0.049 pp
+
+Counties with cells that disagree on planting date (aligned = cells whose date equals the county row date):
+state     county row_planting  n_cells  n_aligned  loss_v025_allcells  loss_v025_aligned
+   IN Montgomery        05/18       56         32               15.74               8.37
+   IN     Benton        05/18       45         40                2.19               2.34
+   MI    Sanilac        05/16      187         56                6.47               8.48
+   MI    Saginaw        05/16       88          2               22.51              17.50
+   MO     Saline        05/08       82         73                3.57               3.00
+   MO      Scott        05/08       47         38               17.40              18.07
+   MO    Audrain        05/08       75         70                6.02               6.03
+   OH     Mercer        05/18       56          5                8.16               3.05
+   SD  Minnehaha        05/22       98         91                5.25               5.47
+
+State values (veg 0.25, rep 1.00 loss, pp):
+state  loss_v025_allcells  loss_v025_aligned  observed_penalty
+   MN               17.41              17.41             -3.67
+   IN               16.50              14.09              0.12
+   SD               11.41              11.48              6.01
+   MI               11.28              10.28              5.62
+   MO                9.00               9.03              1.57
+   IA                5.82               5.82             -1.36
+   OH                5.88               4.18             -0.58
+   WI                3.83               3.83              0.08
+   IL                1.64               1.64              0.53
+
+EXPLORATORY (post hoc). One-sided exact permutation, n = 9:
+  loss_v025_aligned    rho = 0.017  p = 0.490785
+  loss_v050_aligned    rho = 0.117  p = 0.387814
+  loss_v000_aligned    rho = -0.067  p = 0.578409
+  loss_v025_allcells   rho = 0.033  p = 0.474195
+Primary (pre-specified, all cells) for comparison: rho = 0.033, p = 0.474
