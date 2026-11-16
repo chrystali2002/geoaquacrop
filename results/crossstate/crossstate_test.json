@@ -1,0 +1,117 @@
+{
+  "primary": {
+    "n": 9,
+    "rho": 0.03333333333333332,
+    "p_one_sided": 0.4741953262786596,
+    "distinct_modelled_values": 9,
+    "passes_plan": false
+  },
+  "sensitivity": {
+    "loss_v025_median": {
+      "n": 9,
+      "rho": 0.03333333333333332,
+      "p_one_sided": 0.4741953262786596,
+      "distinct_modelled_values": 9
+    },
+    "loss_v050_mean": {
+      "n": 9,
+      "rho": 0.14999999999999997,
+      "p_one_sided": 0.35403439153439153,
+      "distinct_modelled_values": 9
+    },
+    "loss_v000_mean": {
+      "n": 9,
+      "rho": -0.05000000000000004,
+      "p_one_sided": 0.5599537037037037,
+      "distinct_modelled_values": 9
+    },
+    "loss_v050_median": {
+      "n": 9,
+      "rho": -0.15899720766358735,
+      "p_one_sided": 0.6669367283950617,
+      "distinct_modelled_values": 8
+    },
+    "loss_v000_median": {
+      "n": 9,
+      "rho": -0.13333333333333336,
+      "p_one_sided": 0.6459656084656085,
+      "distinct_modelled_values": 9
+    }
+  },
+  "leave_one_state_out": [
+    {
+      "n": 8,
+      "rho": -0.04761904761904759,
+      "p_one_sided": 0.5590029761904762,
+      "distinct_modelled_values": 8,
+      "left_out": "IA"
+    },
+    {
+      "n": 8,
+      "rho": 0.11904761904761911,
+      "p_one_sided": 0.3965029761904762,
+      "distinct_modelled_values": 8,
+      "left_out": "IL"
+    },
+    {
+      "n": 8,
+      "rho": 0.11904761904761908,
+      "p_one_sided": 0.3965029761904762,
+      "distinct_modelled_values": 8,
+      "left_out": "IN"
+    },
+    {
+      "n": 8,
+      "rho": -0.09523809523809526,
+      "p_one_sided": 0.6034970238095239,
+      "distinct_modelled_values": 8,
+      "left_out": "MI"
+    },
+    {
+      "n": 8,
+      "rho": 0.4761904761904763,
+      "p_one_sided": 0.12152777777777778,
+      "distinct_modelled_values": 8,
+      "left_out": "MN"
+    },
+    {
+      "n": 8,
+      "rho": -0.09523809523809526,
+      "p_one_sided": 0.6034970238095239,
+      "distinct_modelled_values": 8,
+      "left_out": "MO"
+    },
+    {
+      "n": 8,
+      "rho": -0.04761904761904759,
+      "p_one_sided": 0.5590029761904762,
+      "distinct_modelled_values": 8,
+      "left_out": "OH"
+    },
+    {
+      "n": 8,
+      "rho": -0.09523809523809522,
+      "p_one_sided": 0.6034970238095239,
+      "distinct_modelled_values": 8,
+      "left_out": "SD"
+    },
+    {
+      "n": 8,
+      "rho": -0.02380952380952378,
+      "p_one_sided": 0.5325644841269841,
+      "distinct_modelled_values": 8,
+      "left_out": "WI"
+    }
+  ],
+  "county_level_awc": {
+    "n": 27,
+    "spearman_awc_vs_loss_v025": -0.17496184021732272,
+    "note": "secondary; pooled across states, descriptive only"
+  },
+  "inputs": {
+    "counties": 27,
+    "states": 9,
+    "alpha": 0.05,
+    "metric": "100 - YieldRecoveryPct at veg 0.25, rep 1.00; state mean"
+  }
+}
