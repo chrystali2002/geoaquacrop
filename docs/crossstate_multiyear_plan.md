@@ -1,7 +1,7 @@
 # Multi-year, all-county process-model test
 
 Status: drafted 2026-11-17, after the 2015 27-county test (tag `crossstate_results_v1`, criterion not met)
-and the aligned-cells sensitivity (Amendment 1). This analysis addresses two stated limitations of that
+and the aligned-cells sensitivity (2015 Amendment 1, tag `crossstate_plan_amendment1`). This analysis addresses two stated limitations of that
 test: one weather year and three counties per state. The 2015 test is unchanged and reported as is.
 This plan is frozen (tag `crossstate_multiyear_plan_frozen`) before any model yield is produced.
 
@@ -78,11 +78,11 @@ effect across the nine rainfed Corn Belt states?
 - P2: for the states with significant observed coefficients (MI and SD negative, MN positive), the sign
   and 95% CI of the modelled coefficient (descriptive).
 - P3: pooled Cell B coefficient, modelled versus observed, with CIs (descriptive).
-- Check on model adequacy (reported first): the same comparison for Cells A and C. The model is judged
-  adequate only if the pooled modelled Cell A and Cell C coefficients are negative (relative to Cell D),
-  as the observed pooled coefficients are, and the cross-state rank correlation between modelled and
-  observed coefficients is positive for both cells. If not, the Cell B comparison is reported as
-  uninformative about recovery mechanisms, whatever its value.
+- Check on model adequacy (reported first; amended, see Multi-year Amendment 1): the same comparison for Cells A and C.
+  The model is judged adequate if the pooled modelled Cell A and Cell C coefficients are negative
+  (relative to Cell D), as the observed pooled coefficients are. The cross-state rank correlations between
+  modelled and observed Cell A and Cell C coefficients are reported descriptively. If the model is not
+  adequate, the Cell B comparison is reported as uninformative about recovery mechanisms, whatever its value.
 - Secondary: P1–P3 in bu/ac.
 - All results are reported whatever they show.
 
@@ -96,3 +96,12 @@ the classification is therefore not assumed; it is part of what is tested.
 ## Scripts and tags
 43 (archive mode) -> 44 build inputs (G1a, G1b) -> 45 run controls -> 46 analysis (G3, then P1–P3).
 Tags: `crossstate_multiyear_plan_frozen` (this file, before 45 is run); `crossstate_multiyear_results_v1`.
+
+## Multi-year Amendment 1 (2026-11-18, before any modelled yield exists)
+The frozen plan (tag `crossstate_multiyear_plan_frozen`) also required the cross-state rank correlation
+between modelled and observed Cell A and Cell C coefficients to be positive. A test of the analysis script
+on synthetic data showed that this condition fails by chance when the true Cell A and C effects differ
+little between states, even if the model reproduces them well in pooled terms; it would then wrongly label
+the Cell B comparison uninformative. The condition is removed; the two correlations are reported
+descriptively. Nothing else changes. This amendment was made before any input was built for, or any
+simulation run in, this analysis (tag `crossstate_multiyear_plan_amendment1`).
